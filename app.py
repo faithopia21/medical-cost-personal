@@ -2,6 +2,12 @@ import streamlit as st
 import pandas as pd
 import joblib
 
+import shap
+import matplotlib.pyplot as plt
+
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+
 st.set_page_config(page_title="Medical Cost Predictor", layout="centered")
 
 st.title("Medical Insurance Cost Predictor")
@@ -40,3 +46,13 @@ if st.sidebar.button("Predict"):
 
     st.subheader("Predicted Annual Medical Cost")
     st.metric(label="Estimated Charges", value=f"${prediction:,.2f}")
+
+ SHAP explanation
+    st.subheader("What drove this prediction")
+
+    explainer = shap.LinearExplainer(model, X_train_scaled)
+    shap_values = explainer(input_df)
+
+    fig, ax = plt.subplots(figsize=(8, 4))
+    shap.plots.waterfall(shap_values[0], show=False)
+    st.pyplot(fig)
